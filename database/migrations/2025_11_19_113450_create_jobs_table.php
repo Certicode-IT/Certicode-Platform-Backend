@@ -21,6 +21,7 @@ return new class extends Migration
             $table->enum('visibility', ['general', 'company_only'])->default('general');
             $table->string('location')->nullable();
             $table->enum('employment_type', ['full-time','part-time','contract'])->default('full-time');
+            $table->enum('work_style',['Onsite','Remote','Hybrid'])->default('Onsite');
             $table->string('salary_range')->nullable();
             $table->timestamps();
         });

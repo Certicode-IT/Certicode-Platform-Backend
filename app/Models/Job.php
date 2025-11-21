@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
+ 
 use Illuminate\Database\Eloquent\Model;
-
+ 
 class Job extends Model
 {
     protected $fillable = [
@@ -15,6 +16,9 @@ class Job extends Model
         'employment_type',
         'salary_range'
     ];
+
+    
+ 
 
     public function company(){
         return $this->belongsTo(Company::class);

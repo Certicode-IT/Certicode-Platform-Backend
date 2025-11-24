@@ -13,6 +13,21 @@ class JobService
         return response()->json($jobs);
     }
 
+    public function getVisibleJob($user){
+        return Job::with(['company', 'skills'])
+            ->where(function ($query) use ($user) {
+                $query->where('visibility', 'general');  
+
+                if ($user  && $user->company_id ) {
+                    $query->orWhere(function ($q) use ($user) {
+                        $q->where('visibility', 'company')
+                        ->where('company_id', $user->company_id);  
+                    });
+                }
+              })
+             ->get();
+    }
+
     public function getJob($id){
        $job = Job::with(['company','skills'])->find($id);
 
@@ -56,7 +71,7 @@ class JobService
 
     public function deleteJob($id){
         // find the job
-        $job = $this->getJob($id);
+        $job = Job::with(['company','skills'])->find($id);
 
         //check if job exist otherwise return message
         if(!$job){
@@ -69,6 +84,38 @@ class JobService
         return response()->json([
             'success'=> 'true',
             'message'=> 'Job Deleted'
+        ]);
+    }
+
+    public function recommendCourses($id){
+
+        $job  = Job::find($id);
+
+        if(!$job){
+            return response()->json(['message','Job with id '. $id . ' not found'],404);
+        }
+
+        $description = strtolower($job->description);
+        
+        $courses = [];
+
+        if(str_contains($description,'php') || str_contains($description,'laravel')){
+            $courses[] = 'Laravel for begginers';
+            $courses[] = 'Mastering PHP OOP';
+        }
+        
+        if(str_contains($description,'frontend') || str_contains($description,'react')){
+            $courses[] = 'Reactjs for begginers';
+            $courses[] = 'Modern Javascript Course';
+        }
+        
+        if(empty($courses)){
+            $courses[] = 'General Programming course';
+        }
+        
+        return response()->json([
+            'job_id' => $id,
+            'courses' => $courses
         ]);
     }
 

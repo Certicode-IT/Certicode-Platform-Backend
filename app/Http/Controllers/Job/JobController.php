@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Job;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreJobRequest;
 use App\Http\Requests\UpdateJobRequest;
-use App\Models\Job;
 use App\Services\JobService;
+use Illuminate\Http\Request;
 
- 
 class JobController extends Controller
 {
     protected $jobService;
@@ -20,6 +20,11 @@ class JobController extends Controller
     //display all jobs
     public function index(){
         return  $this->jobService->getALlJobs();
+    }
+
+    public function visibleJobs(Request $request){
+        $user = $request->user();
+        return $this->jobService->getVisibleJob($user);
     }
     
     //display single jobb
@@ -42,7 +47,9 @@ class JobController extends Controller
         return $this->jobService->deleteJob($id);
     }
 
-    public function recommendedCourses($id){}
+    public function recommendedCourses($id){
+        return $this->jobService->recommendCourses($id);
+    }
 
 
 }
